@@ -1,7 +1,3 @@
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Arrays;
-
 public class CommonElements {
     /**
      *
@@ -113,3 +109,4 @@ public class CommonElements {
         return same;
     }
 }
+
