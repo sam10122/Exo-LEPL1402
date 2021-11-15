@@ -56,7 +56,7 @@ abstract class FList<A> implements Iterable<A> {
             FList<A> elem = FList.this;
 
             public boolean hasNext() {
-                return elem.tail().isEmpty();
+                return elem.isEmpty() == false;
             }
 
             public A next() {
@@ -148,10 +148,10 @@ abstract class FList<A> implements Iterable<A> {
 
         @Override
         public FList<A> tail() {
-           if(this.isEmpty()){
-               throw new NoSuchElementException();
-           }
-           return this.next;
+            if(this.isEmpty()){
+                throw new NoSuchElementException();
+            }
+            return this.next;
         }
 
         @Override
@@ -171,7 +171,7 @@ abstract class FList<A> implements Iterable<A> {
                 }
             }
             if(f.test(this.head)){
-                    return new Cons<>(this.head,this.next.filter(f));
+                return new Cons<>(this.head,this.next.filter(f));
             }
             return this.next.filter(f);
         }
