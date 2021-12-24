@@ -1,11 +1,15 @@
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
+
 public class FindPattern {
 
     /**
      * In this task you must find the first occurrence of a pattern in a
      * sequence.
-     * This occurrence might also be **in a different order** than in 
+     * This occurrence might also be **in a different order** than in
      * the pattern.
-     * 
+     *
      * For example, let:
      *      pattern = [1, 1, 3, 5]
      *      sequence = [3, 1, 2, 5, 1, 3, 1, 5, 1]
@@ -23,61 +27,33 @@ public class FindPattern {
      *         sequence or -1 if the pattern is not in the sequence
      */
     public static int find(int [] pattern, int [] sequence) {
-        int index = 0;
+        LinkedList<Integer> patList = new LinkedList<>();
+        LinkedList<Integer> seqList = new LinkedList<>();
+
         for(int i = 0; i < pattern.length; i++){
-            for(int j = 0; j < sequence.length; j++){
-                if(pattern[i] == sequence[j]){
-                    if((sequence.length-j) >= pattern.length ){
-                        if(findHelp(pattern,subArray(sequence,j,j+pattern.length))){
-                            return j;
-                        }
-                    }
-                }
+            patList.add(pattern[i]);
+        }
+
+        for(int j = 0; j < sequence.length; j++){
+            seqList.add(sequence[j]);
+        }
+
+        Collections.sort(patList);
+        int index = 0;
+        int end = pattern.length;
+        while(end <= sequence.length){
+            LinkedList<Integer> compare = new LinkedList<>();
+            compare.addAll(seqList.subList(index,end));
+            Collections.sort(compare);
+            if(patList.equals(compare)){
+                return index;
             }
+            index ++;
+            end ++;
         }
         return -1;
     }
 
-    public static int[] subArray(int[] matrix,int index, int end){
-        int[] mat = new int[end-index];
-        int j = 0;
-        for(int i = index; i < end; i++){
-            mat[j] = matrix[i];
-            j++;
-        }
-        return mat;
-    }
-
-    public static boolean findHelp(int[] pattern, int[] sequence){
-        int[] pat = sort(pattern);
-        int[] seq = sort(sequence);
-        for(int i = 0; i < pat.length; i++){
-            if(pat[i] != seq[i]){
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public static int[] sort(int[] matrix){
-        for(int i = 0; i < matrix.length-1; i++){
-            for(int j = i+1; j < matrix.length; j++){
-                if(matrix[i] > matrix[j]){
-                    int swap = matrix[i];
-                    matrix[i] = matrix[j];
-                    matrix[j] = swap;
-                }
-            }
-
-        }
-        return matrix;
-    }
-
-
-    public static void main(String[] args) {
-        int[] ma = new int[]{1,2,3,4,5,6};
-        int[] o = new int[]{1,3,3,1,2,2,1,2,3};
-        System.out.println(find(ma,o));
-    }
 
 }
+
