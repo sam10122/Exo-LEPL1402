@@ -15,7 +15,7 @@ import java.util.LinkedList;
  *
  */
 public class MergeSortedLinkedListDuplicate {
-    static Node node = null;
+
 
     /**
      * You receive two linked lists containing elements in increasing order.
@@ -33,30 +33,7 @@ public class MergeSortedLinkedListDuplicate {
      */
     public static Node merge(Node list1, Node list2) {
         LinkedList<Integer> list = new LinkedList<>();
-        LinkedList<Integer> list3 = new LinkedList<>();
-        Node node1 = null;
-        if (list1 == null) {
-            list3 = link(list, list2);
-            node1 = fusion(list3);
-            node1.next = null;
-            return node1;
-        }
-        if (list2 == null) {
-            list3 = link(list, list1);
-            node1 = fusion(list3);
-            node1.next = null;
-            return node1;
-        }
-        else {
-            list3 = link(list, list1);
-            LinkedList<Integer> list4 = link(list3, list2);
-            Collections.sort(list4, (a, b) -> (a - b));
-            return fusion(list4);
-        }
-    }
-
-    public static LinkedList<Integer> link(LinkedList<Integer> list,Node list1){
-        while(list1.next != null){
+        while(list1 != null){
             if(!list.contains(list1.value)){
                 list.add(list1.value);
                 list1 = list1.next;
@@ -65,32 +42,39 @@ public class MergeSortedLinkedListDuplicate {
                 list1 = list1.next;
             }
         }
-        if(!list.contains(list1.value)){
-            list.add(list1.value);
+
+        while(list2 != null){
+            if(!list.contains(list2.value)){
+                list.add(list2.value);
+                list2 = list2.next;
+            }
+            else{
+                list2 = list2.next;
+            }
         }
-        return list;
+
+        Collections.sort(list);
+        Node node = null;
+        return fill(node,list);
     }
-
-    public static Node fusion(LinkedList<Integer> list){
-        if(list.size() == 0){
-            return node;
-        }
-        return node = new Node(list.remove(0),fusion(list));
-    }
-
-
-
-
 
 
     static class Node {
 
         int value;
         Node next;
+
         public Node(int value, Node next) {
             this.value = value;
             this.next = next;
         }
 
+    }
+
+    public static Node fill(Node node, LinkedList<Integer> list){
+        if(list.size() == 0){
+            return node;
+        }
+        return node = new Node(list.remove(0),fill(node,list));
     }
 }
