@@ -1,5 +1,8 @@
 // You are allowed to add imports here
+
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 /**
  * This class implements a publisher of news. News are strings
@@ -18,23 +21,16 @@ import java.util.LinkedList;
 
 public class NewsPublisher {
     // You are allowed to add methods or class members here
-    LinkedList<Viewer> subscribers = new LinkedList<>();
-    String[] newss = new String[100];
+    LinkedList<Subscriber> subscribers = new LinkedList<>();
+    Map<Subscriber,Map<Integer,String>> subs = new HashMap<>();
+    Map<Integer,String> topics = new HashMap<>();
 
-    public class Viewer implements Subscriber{
-        LinkedList<Integer> topic = new LinkedList<>();
-        Subscriber subscriber;
-
-        public Viewer(Subscriber subscriber){
-            this.subscriber = subscriber;
-        }
-
+    public static class Info implements Subscriber{
         @Override
         public void newsArrived(String news) {
             System.out.println(news);
         }
     }
-
     /**
      * A subscriber subscribes to one or more topics. Everytime
      * a news on one of those topics is published, the subscriber
@@ -55,34 +51,19 @@ public class NewsPublisher {
      * You can assume that "topic" is a number in 0..10 (included)
      */
     public void subscribe(Subscriber subscriber, int topic) {
-        if(subscribers == null){
-            Viewer sub = new Viewer(subscriber);
-            sub.topic.add(topic);
-            subscribers.add(sub);
+        if(!subs.containsKey(subscriber)){
+            subscribers.add(subscriber);
+            subs.put(subscriber, topics = new HashMap<>());
+            subs.get(subscriber).put(topic,"");
         }
         else{
-            for(Viewer i : subscribers){
-                if(i.subscriber == subscriber){
-                    if(!i.topic.contains(topic)){
-                        i.topic.add(topic);
-                    }
+            if(subs.containsKey(subscriber)){
+                if(!subs.get(subscriber).containsKey(topic)){
+                    subs.get(subscriber).put(topic,"");
                 }
             }
-
-            boolean vrai = true;
-            for(Viewer j : subscribers){
-                if(j.subscriber == subscriber){
-                    vrai = false;
-                }
-            }
-
-            if(vrai){
-                Viewer otherSub = new Viewer(subscriber);
-                otherSub.topic.add(topic);
-                subscribers.add(otherSub);
-            }
-
         }
+
     }
 
     /**
@@ -95,10 +76,8 @@ public class NewsPublisher {
      * You can assume that "topic" is a number in 0..10 (included)
      */
     public void unsubscribe(Subscriber subscriber, int topic) {
-        for(Viewer i : subscribers){
-            if(i.subscriber == subscriber){
-                i.topic.removeFirstOccurrence(topic);
-            }
+        if(subs.containsKey(subscriber)){
+            subs.get(subscriber).remove(topic);
         }
     }
 
@@ -115,22 +94,22 @@ public class NewsPublisher {
      * You can assume that "topic" is a number in 0..10 (included) or -1.
      */
     public void publishNews(int topic, String news) {
-        for(int i = 0; i < topic; i++){
-            if(i == topic-1){
-                newss[i] = news;
+        Info event = new Info();
+        if(topic < 0){
+            for(int i = 0; i < subscribers.size(); i++){
+                subscribers.get(i).newsArrived(news);
+            }
+        }
+        else{
+            for(int i = 0; i < subscribers.size(); i++){
+                if(subs.get(subscribers.get(i)).containsKey(topic)){
+                    subs.get(subscribers.get(i)).remove(topic);
+                    subs.get(subscribers.get(i)).put(topic,news);
+                    subscribers.get(i).newsArrived(news);
+                }
             }
         }
 
-        for(Viewer x : subscribers){
-            if(x.topic.contains(topic)){
-                x.subscriber.newsArrived(news);
-            }
-        }
-
-        if(topic == -1){
-            for(Viewer x : subscribers){
-                x.subscriber.newsArrived(news);
-            }
-        }
     }
+
 }
